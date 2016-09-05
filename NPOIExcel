@@ -96,6 +96,7 @@ public static class NPOIExcel
                         {
                             if (i == cn)
                             {
+                                flag = true;
                                 byte[] bytes = System.IO.File.ReadAllBytes(r[i].ToString());
                                 int pictureIdx = workbook.AddPicture(bytes, PictureType.PNG);
                                 HSSFPatriarch patriarch = (HSSFPatriarch)sheet.CreateDrawingPatriarch();
