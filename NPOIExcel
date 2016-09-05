@@ -102,11 +102,6 @@ public static class NPOIExcel
                                 HSSFClientAnchor anchor = new HSSFClientAnchor(0, 10, 1023, 0, cn, rowsNum, cn, rowsNum);  //给该列该行填充图片数据
                                 HSSFPicture pict = (HSSFPicture)patriarch.CreatePicture(anchor, pictureIdx);
                                 pict.Resize();
-                                ////删除二维码
-                                //if (System.IO.File.Exists(r[i].ToString()))
-                                //{
-                                //    System.IO.File.Delete(r[i].ToString());
-                                //}
                             }
                         });
                         if (flag)
