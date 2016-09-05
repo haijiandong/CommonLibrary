@@ -114,11 +114,6 @@ public static class NPOIExcel
                 }
 
                 rowsNum++;
-                ////删除二维码
-                //if (System.IO.File.Exists(strQrCodePath))
-                //{
-                //    System.IO.File.Delete(strQrCodePath);
-                //}
             }
             //列宽自适应，只对英文和数字有效
             for (int i = 0; i <= rowsNum; i++)
