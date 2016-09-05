@@ -1,0 +1,136 @@
+public static class EPPlusExcel
+    {
+        /// <summary>
+        /// 创建包含图片的Excel文件流
+        /// </summary>
+        /// <param name="table">数据表(其中图片路径数据必须是服务器相对路径)</param>
+        /// <param name="colNum">图片在那一列保存，列数从左起0开始递增</param>
+        /// <returns>Excel文件流</returns>
+        public static MemoryStream CreateHaveImgExcelStream(DataTable table, int colNum)
+        {
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                ExcelWorksheet sheet = package.Workbook.Worksheets.Add("sheet1");
+                int colCount = table.Columns.Count;
+                //表头
+                for (int i = 0; i < colCount; i++)
+                {
+                    sheet.Cells[1, i + 1].Value = table.Columns[i].Caption;
+                }
+                int k = 2;  //记录总行数
+                foreach (DataRow row in table.Rows)
+                {
+                    for (int i = 0; i < colCount; i++)
+                    {
+                        if (i == colNum)
+                        {
+                            Image img = Image.FromFile(row[i].ToString());
+                            var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), img);
+                            picture.SetPosition(k-1, 0, colNum, 0);
+                            //sheet.Cells.Style.ShrinkToFit = true;//单元格自动适应大小
+                            //sheet.Column[k,colNum].Style.ShrinkToFit = true;
+                            sheet.Column(k).Style.ShrinkToFit = true;
+                            //sheet.Row(k-1).CustomHeight = true;//自动调整行高
+                            continue;
+                        }
+                        sheet.Cells[k, i + 1].Value = row[i].ToString();
+                        sheet.Column(k).Style.ShrinkToFit = true;//单元格自动适应大小
+                        //sheet.Row(k).CustomHeight = true;//自动调整行高
+                    }
+                    k++;
+
+                }
+                MemoryStream ms = new MemoryStream();
+                package.SaveAs(ms);
+                return ms;
+            }
+        }
+
+        /// <summary>
+        /// 创建包含多列图片的Excel文件流
+        /// </summary>
+        /// <param name="table">数据表</param>
+        /// <param name="colNums">图片所在列数组成的集合</param>
+        /// <returns>Excel文件流</returns>
+        public static MemoryStream CreateHaveImgExcelStream(DataTable table, List<int> colNums)
+        {
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                ExcelWorksheet sheet = package.Workbook.Worksheets.Add("sheet1");
+                int colCount = table.Columns.Count;
+                //表头
+                for (int i = 0; i < colCount; i++)
+                {
+                    sheet.Cells[1, i + 1].Value = table.Columns[i].Caption;
+                }
+                int k = 2;  //记录总行数
+                foreach (DataRow row in table.Rows)
+                {
+                    for (int i = 0; i < colCount; i++)
+                    {
+                        if (colNums.Count()>0)
+                        {
+                            bool flag = false;
+                            colNums.ForEach(cm =>
+                            {
+                                if (i == cm)
+                                {
+                                    flag = true;
+                                    Image img = Image.FromFile(row[i].ToString());
+                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), img);
+                                    picture.SetPosition(k - 1, 0, cm, 0);
+                                    //sheet.Cells.Style.ShrinkToFit = true;//单元格自动适应大小
+                                    //sheet.Row(k-1).CustomHeight = true;//自动调整行高
+                                }
+                            });
+                            if (flag)
+                            {
+                                continue;
+                            }
+                        }
+                        sheet.Cells[k, i + 1].Value = row[i].ToString();
+                        //sheet.Cells.Style.ShrinkToFit = true;//单元格自动适应大小
+                        //sheet.Row(k).CustomHeight = true;//自动调整行高
+                    }
+                    k++;
+
+                }
+                //sheet.Cells.Style.ShrinkToFit = true;//单元格自动适应大小
+                //sheet.Row(k).CustomHeight = true;//自动调整行高
+                MemoryStream ms = new MemoryStream();
+                package.SaveAs(ms);
+                return ms;
+            }
+        }
+        /// <summary>
+        /// 创建Excel文件流
+        /// </summary>
+        /// <param name="table">数据表</param>
+        /// <returns>Excel文件流</returns>
+        public static MemoryStream CreateExcelStream(DataTable table)
+        {
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                ExcelWorksheet sheet = package.Workbook.Worksheets.Add("sheet1");
+                int colCount = table.Columns.Count;
+                //表头
+                for (int i = 0; i < colCount; i++)
+                {
+                    sheet.Cells[1, i + 1].Value = table.Columns[i].Caption;
+                }
+                int k = 2;  //记录总行数
+                foreach (DataRow row in table.Rows)
+                {
+                    for (int i = 0; i < colCount; i++)
+                    {
+                        sheet.Cells[k, i + 1].Value = row[i].ToString();
+                    }
+                    k++;
+                }
+                MemoryStream ms = new MemoryStream();
+                package.SaveAs(ms);
+                return ms;
+            }
+        }
+
+    }
