@@ -1,0 +1,34 @@
+/*
+ 学车不学习视频播放脚本，执行一次可完成观看5个课时的任务，暂时还未找到完成全部视频人物的方法，如果有朋友发现，麻烦补充一下，谢谢。
+*/
+
+$.getJSONPCache(apiUrl + 'videoApi/video/GetChapterList', {}, (new Check()).result(function (data) {
+    var strHtml = [];
+    for (var v in data.data) {
+        var kmInfo = data.data[v];
+        var classList = kmInfo.ClassList;
+        for (var i = 0; i < classList.length; i++) {
+            for (var j = 0; j < classList[i].ChapterList.length; j++) {
+                //只播放没有播放过的
+                if (classList[i].ChapterList[j].SFJS != '1') {
+                    console.log(classList[i].ChapterList[j].ID, kmInfo.KM, classList[i].ClassName, classList[i].ChapterList[j].ChapterName, classList[i].ChapterList[j].SPSC);
+                    var url = "http://xcbapi.xuechebu.com/videoApi/student/UpdatePlay";
+                    $.getJSONPCache(
+                        url,
+                        {
+                            type: kmInfo.KM,  //科目 (1,4)
+                            id: classList[i].ChapterList[j].ID, //课程的id
+                            beforeWatchTime: 0,
+                            thisWatchTime: (classList[i].ChapterList[j].SPSC - 1),   //课程的总时间(秒)
+                            thisWatchLocation: (classList[i].ChapterList[j].SPSC - 1)  //当前看到了哪了(秒) ,所以这里发送视频的长度，说明看完了
+                        },
+                        function (data) {
+                            {
+                                console.log(data);
+                            }
+                        });
+                }
+            }
+        }
+    }
+}));
